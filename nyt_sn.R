@@ -111,3 +111,61 @@ table(g10$V1)
 str(g10)
 
 return(g8)
+
+create_url <- paste("http://api.nytimes.com/svc/archive/v1/", '2013',"/",'1',".json?api-key=",api_key, sep="")
+
+g1 <- GET(create_url)
+
+g2 <- content(g1, 'parsed')
+
+g3 <- g2$response
+
+g4 <- g3$docs
+
+g5 <- data.frame(do.call(rbind, g4), stringsAsFactors=FALSE)
+
+g6 <- g5$section_name
+
+g7 <- lapply(g6, function(x) ifelse(x=="NULL", NA, x))
+g8 <- lapply(g7, function(x) as.character((unlist(x))))
+g9 <- as.data.frame(do.call(cbind, g8))
+
+g9$ID <- seq.int(nrow(g9))
+
+g10 <- as.data.frame(t(g9))
+
+g11 <- as.data.frame(table(g10$V1))
+
+##
+
+acreate_url <- paste("http://api.nytimes.com/svc/archive/v1/", '2013',"/",'3',".json?api-key=",api_key, sep="")
+
+ag1 <- GET(acreate_url)
+
+ag2 <- content(ag1, 'parsed')
+
+ag3 <- ag2$response
+
+ag4 <- ag3$docs
+
+ag5 <- data.frame(do.call(rbind, ag4), stringsAsFactors=FALSE)
+
+ag6 <- ag5$section_name
+
+ag7 <- lapply(ag6, function(x) ifelse(x=="NULL", NA, x))
+ag8 <- lapply(ag7, function(x) as.character((unlist(x))))
+ag9 <- as.data.frame(do.call(cbind, ag8))
+
+ag9$ID <- seq.int(nrow(ag9))
+
+ag10 <- as.data.frame(t(ag9))
+
+ag11 <- as.data.frame(table(ag10$V1))
+
+sum(ag11$Freq)
+sum(g11$Freq)
+
+
+t1 <- ag5 %>%
+          filter(X_id == '51409d26cf28d02e3d00012e')
+
