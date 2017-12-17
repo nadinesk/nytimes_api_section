@@ -165,12 +165,13 @@ ag11 <- as.data.frame(table(ag10$V1))
 library(tidyr)
 
 str(ag11)
-ag12 <- ag11 %>%
-          separate(Var1, ";") %>%
-          group_by(`;`) %>%
-          summarise_all(funs(sum))
+ag12 <- cSplit(ag11, 'Var1', ";") %>%
+            select(Var1_1, Freq) %>%
+            group_by(Var1_1) %>%
+            summarise_all(funs(sum))
 
-sum(ag11$Freq)
+
+sum(ag12$Freq)
 sum(g11$Freq)
 
 sum(ag12$Freq)
