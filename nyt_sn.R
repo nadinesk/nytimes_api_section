@@ -162,8 +162,18 @@ ag10 <- as.data.frame(t(ag9))
 
 ag11 <- as.data.frame(table(ag10$V1))
 
+library(tidyr)
+
+str(ag11)
+ag12 <- ag11 %>%
+          separate(Var1, ";") %>%
+          group_by(`;`) %>%
+          summarise_all(funs(sum))
+
 sum(ag11$Freq)
 sum(g11$Freq)
+
+sum(ag12$Freq)
 
 
 t1 <- ag5 %>%
