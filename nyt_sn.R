@@ -74,9 +74,9 @@ getMonths <- function(year, key) {
 }
 
 t16 <- getMonths('2016', api_key)
-t15 <- getMonths('2015', api_key)
-t14 <- getMonths('2014', api_key)
-t13 <- getMonths('2013', api_key)
+c15 <- newgetMonths('2015', api_key)
+t14 <- newgetMonths('2014', api_key)
+t13 <- newgetMonths('2013', api_key)
 t12 <- getMonths('2012', api_key)
 t11 <- getMonths('2011', api_key)
 
@@ -179,4 +179,75 @@ sum(ag12$Freq)
 
 t1 <- ag5 %>%
           filter(X_id == '51409d26cf28d02e3d00012e')
+
+
+#######
+
+
+b2 <- newgetArchiveSectionName('2013', '2', api_key)
+b3 <- newgetArchiveSectionName('2013', '3', api_key)
+b4 <- newgetArchiveSectionName('2013', '4', api_key)
+b5 <- newgetArchiveSectionName('2013', '5', api_key)
+b6 <- newgetArchiveSectionName('2013', '6', api_key)
+b7 <- newgetArchiveSectionName('2013', '7', api_key)
+b8 <- newgetArchiveSectionName('2013', '8', api_key)
+b9 <- newgetArchiveSectionName('2013', '9', api_key)
+b10 <- newgetArchiveSectionName('2013', '10', api_key)
+b11 <- newgetArchiveSectionName('2013', '11', api_key)
+b12 <- newgetArchiveSectionName('2013', '12', api_key)
+
+newgetArchiveSectionName <- function(year, month, key) {
+  
+  create_url <- paste("http://api.nytimes.com/svc/archive/v1/", year,"/",month,".json?api-key=",key, sep="")
+  
+  g1 <- GET(create_url)
+  
+  g2 <- content(g1, 'parsed')
+  
+  g3 <- g2$response
+  
+  g4 <- g3$docs
+  
+  g5 <- data.frame(do.call(rbind, g4), stringsAsFactors=FALSE)
+  
+  g6 <- g5$section_name
+  
+  g7 <- lapply(g6, function(x) ifelse(x=="NULL", NA, x))
+  g8 <- lapply(g7, function(x) as.character((unlist(x))))
+  g9 <- as.data.frame(do.call(cbind, g8))
+  
+  g9$ID <- seq.int(nrow(g9))
+  
+  g10 <- as.data.frame(t(g9))
+  
+  g11 <- as.data.frame(table(g10$V1, useNA="always"))
+  
+  g12 <- cSplit(g11, 'Var1', ";") %>%
+    select(Var1_1, Freq) %>%
+    group_by(Var1_1) %>%
+    summarise_all(funs(sum))
+  
+  return(g12)
+  
+}
+
+newgetMonths <- function(year, key) {
+  df_total = NULL
+  
+  for (i in 1:12) {
+    
+    i_string <- toString(i)
+    assign(paste('sub',i,sep=''), newgetArchiveSectionName(year,i_string,key))
+    str(sub1)
+  }
+  cyear <- rbind(sub1, sub2, sub3, sub4, sub5, sub6, sub7, sub8, sub9, sub10, sub11, sub12) %>%
+    group_by(Var1_1) %>%
+    summarise_all(funs(sum)) %>%
+    arrange(desc(Freq))
+  
+  return(cyear)
+  
+  
+}
+
 
