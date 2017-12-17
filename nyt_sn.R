@@ -165,14 +165,35 @@ c07 <- newgetMonths('2007', api_key)
 c06 <- newgetMonths('2006', api_key)
 
 
-c11_16 <- c11 %>%
-            left_join(c12, by="Var1_1") %>%
-            left_join(c13, by="Var1_1") %>%
-            left_join(c14, by="Var1_1") %>%
-            left_join(c15, by="Var1_1") %>%
-            left_join(c16, by="Var1_1")
+c06_16 <- c06 %>%
+  left_join(c07, by="Var1") %>%	
+  left_join(c08, by="Var1") %>%
+  left_join(c09, by="Var1") %>%
+  left_join(c10, by="Var1") %>%
+  left_join(c11, by="Var1") %>%
+  left_join(c12, by="Var1") %>%
+  left_join(c13, by="Var1") %>%
+  left_join(c14, by="Var1") %>%
+  left_join(c15, by="Var1") %>%
+  left_join(c16, by="Var1") %>%
+  arrange(desc(`Freq-2015`))
       
 
+c06_16_new <- c06_16[1:10,]
+
+c06_16_new
+
+c06_16_new_melt <- melt(c06_16_new)
+
+p<-ggplot(c06_16_new_melt, aes(x=Var1, y=value, group=variable)) +
+  geom_line(aes(color=variable))+
+  geom_point(aes(color=variable))
+
+p
+
+setwd("/Users/nadinekhattak/Desktop/nyt_api")
+
+ggsave('p.png')
 
 sum(c16$`Freq-2016`)
 sum(c15$`Freq-2015`)
@@ -185,7 +206,6 @@ sum(c09$`Freq-2009`)
 sum(c08$`Freq-2008`)
 sum(c07$`Freq-2007`)
 sum(c06$`Freq-2006`)
-
 
 n13_1 <- getArchiveSectionName('2013','1',api_key)
 n13_2 <- getArchiveSectionName('2013','2',api_key)
